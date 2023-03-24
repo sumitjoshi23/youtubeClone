@@ -8,6 +8,7 @@ import {
   YOUTUBE_AUTO_SUGGESTIONS_API_LINK,
   YOUTUBE_SEARCHBYKEYWORD_API_LINK,
 } from "./utils/constants";
+import youTubeLogo from "./utils/images/youTubeLogo.png";
 import { cacheResults } from "./store/slices/searchSlice";
 import { Link } from "react-router-dom";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
@@ -100,23 +101,19 @@ const Head = () => {
     dispatch(toggleMenu());
   }
   return (
-    <div className="sticky top-0 bg-white grid items-center grid-flow-col py-3 mb-6 mx-2 shadow-lg">
+    <div className="z-10 sticky top-0 bg-white grid items-center grid-flow-col py-3 mb-6 shadow-lg">
       <div className="flex col-span-1">
         <GiHamburgerMenu
           onClick={() => handleToggleMenu()}
-          className="h-11 mx-2 mr-4 cursor-pointer"
+          className="h-8 mx-4 mr-4 cursor-pointer"
         />
         <Link to="/">
-          <img
-            className="h-11"
-            alt="youTubeLogo"
-            src="https://logos-world.net/wp-content/uploads/2020/04/YouTube-Logo.png"
-          ></img>
+          <img className="h-8" alt="youTubeLogo" src={youTubeLogo}></img>
         </Link>
       </div>
       <div className="col-span-10 m-auto">
         <form
-          className=" max-w-fit "
+          className="max-w-fit "
           ref={formElement}
           onSubmit={(e) => handleSearchClick(e, searchTerm)}
         >
@@ -133,7 +130,7 @@ const Head = () => {
           </button>
           {showSuggestions && (
             <div>
-              <ul className="fixed bg-white py-2 px-5 w-[27rem] border border-gray-100 rounded shadow-lg">
+              <ul className="fixed bg-white my-2 px-5 w-[27rem] rounded shadow-lg">
                 {suggestions.map((s) => (
                   <li
                     key={s}
@@ -143,7 +140,7 @@ const Head = () => {
 
                       handleSearchClick(e, searchTerm);
                     }}
-                    className="flex shadow-sm hover:bg-gray-100"
+                    className="flex shadow-sm hover:bg-gray-200"
                   >
                     {" "}
                     <HiMagnifyingGlass className="mt-1 mr-1" />
@@ -155,10 +152,10 @@ const Head = () => {
           )}
         </form>
       </div>
-      <div className="w-40">
+      <div className="w-40 float-right">
         {!profile ? (
           <button
-            className="float-right flex items-center leading-none px-2 py-1 rounded border border-gray-400 hover:border-transparent hover:scale-125  "
+            className="float-right flex items-center text-white font-semibold text-xl border leading-none px-2 py-1 rounded-lg hover:border-transparent hover:scale-110 bg-[#ec1313e0] duration-300"
             onClick={login}
           >
             <img
@@ -170,7 +167,7 @@ const Head = () => {
           </button>
         ) : (
           <button
-            className="float-right flex items-center leading-none px-2 py-1 rounded border border-gray-400 hover:border-transparent hover:scale-125 "
+            className="float-right text-white flex items-center leading-none px-2 py-1 font-semibold text-xl  border rounded-lg hover:border-transparent hover:scale-110 bg-[#ec1313e0] duration-300"
             onClick={logOut}
           >
             <img

@@ -4,7 +4,7 @@ const VideoCard = ({ video }) => {
   let { snippet, statistics } = video;
 
   return (
-    <div className="h-[270px] m-2 p-2 w-48 shadow-lg hover:bg-gray-200 rounded-lg">
+    <div className="h-[270px] my-4 mx-3 p-2 w-48 shadow-lg hover:bg-gray-200 hover:scale-105 duration-300 rounded-lg">
       <img
         className="rounded-lg "
         alt="videoImg"
