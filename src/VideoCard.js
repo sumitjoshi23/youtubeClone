@@ -15,7 +15,7 @@ const VideoCard = ({ video }) => {
           {snippet.title}
         </li>
         <li className="text-gray-500 text-xs my-1">{snippet.channelTitle}</li>
-        <li className="text-gray-500 text-xs">{statistics.viewCount} views</li>
+        <li className="text-gray-500 text-xs">{statistics?.viewCount} views</li>
       </ul>
     </div>
   );

@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 let videoSlice = createSlice({
   name: "Video",
   initialState: {
-    video: [],
+    videos: [],
   },
   reducers: {
     setVideos: (state, action) => {
-      state.video = [...state, ...action.payload];
+      state.videos = action.payload;
     },
     // filterData: (state, action) => {
     //   state.video = [

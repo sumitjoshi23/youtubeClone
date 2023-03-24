@@ -1,21 +1,25 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Shimmer from "./Shimmer";
+import { setVideos } from "./store/slices/videoSlice";
 import { YOUTUBE_API_LINK } from "./utils/constants";
 import VideoCard from "./VideoCard";
 
 const VideoContainer = () => {
-  const [videos, setVideos] = useState([]);
+  const dispatch = useDispatch();
 
+  const videos = useSelector((store) => store.video.videos);
+  const getVideos = useCallback(async () => {
+    let data = await axios.get(YOUTUBE_API_LINK);
+    dispatch(setVideos(data.data.items));
+  }, [dispatch]);
   useEffect(() => {
     getVideos();
-  }, []);
-  async function getVideos() {
-    let data = await axios.get(YOUTUBE_API_LINK);
-    setVideos(data.data.items);
-  }
-  let renderedVideos = videos.map((video) => (
+  }, [getVideos]);
+
+  let renderedVideos = videos?.map((video) => (
     <Link key={video.id} to={"/watch?v=" + video.id}>
       <VideoCard video={video}></VideoCard>
     </Link>

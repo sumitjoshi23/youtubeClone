@@ -1,19 +1,60 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { FaUserAlt } from "react-icons/fa";
+import googleIcon from "./utils/images/googleIcon.png";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleMenu } from "./utils/appSlice";
-import { YOUTUBE_AUTO_SUGGESTIONS_API_LINK } from "./utils/constants";
-import { cacheResults } from "./utils/searchSlice";
+import { toggleMenu } from "./store/slices/appSlice";
+import {
+  YOUTUBE_AUTO_SUGGESTIONS_API_LINK,
+  YOUTUBE_SEARCHBYKEYWORD_API_LINK,
+} from "./utils/constants";
+import { cacheResults } from "./store/slices/searchSlice";
+import { Link } from "react-router-dom";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import {
+  setSignedInUser,
+  setSignedInUserProfile,
+} from "./store/slices/signedInUserSlice";
+import { setVideos } from "./store/slices/videoSlice";
 
 const Head = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  let dispatch = useDispatch();
-
   const searchCache = useSelector((store) => store.search);
+
+  const { user, profile } = useSelector((store) => store.signedInUser);
+  const dispatch = useDispatch();
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => dispatch(setSignedInUser(codeResponse)),
+    onError: (error) => console.log("Login Failed:", error),
+  });
+
+  useEffect(() => {
+    if (user) {
+      axios
+        .get(
+          `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`,
+              Accept: "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          dispatch(setSignedInUserProfile(res.data));
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [user, dispatch]);
+
+  const logOut = () => {
+    googleLogout();
+    dispatch(setSignedInUserProfile(null));
+  };
 
   const getAutoSuggestions = useCallback(async () => {
     let data = await fetch(YOUTUBE_AUTO_SUGGESTIONS_API_LINK + searchTerm);
@@ -34,35 +75,58 @@ const Head = () => {
       clearTimeout(timer);
     };
   }, [searchCache, searchTerm, getAutoSuggestions]);
+  const formElement = useRef();
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (!formElement.current.contains(e.target)) setShowSuggestions(false);
+    };
+    document.addEventListener("click", handler, true);
+    return () => {
+      document.removeEventListener("click", handler);
+    };
+  }, []);
+
+  async function handleSearchClick(e, s) {
+    e.preventDefault();
+    const data = await fetch(YOUTUBE_SEARCHBYKEYWORD_API_LINK(s));
+    const json = await data.json();
+    console.log(json);
+    dispatch(setVideos(json.items));
+    setShowSuggestions(false);
+  }
 
   function handleToggleMenu() {
     dispatch(toggleMenu());
   }
   return (
-    <div className="sticky top-0 bg-white grid grid-flow-col py-3 mt-0 mb-2 mx-2 shadow-lg">
+    <div className="sticky top-0 bg-white grid items-center grid-flow-col py-3 mt-0 mb-2 mx-2 shadow-lg">
       <div className="flex col-span-1">
         <GiHamburgerMenu
           onClick={() => handleToggleMenu()}
           className="h-8 w-8 px-2"
         />
-
-        <img
-          className="h-8 mx-2"
-          alt="youTubeLogo"
-          src="https://logos-world.net/wp-content/uploads/2020/04/YouTube-Logo.png"
-        ></img>
+        <Link to="/">
+          <img
+            className="h-8 mx-2"
+            alt="youTubeLogo"
+            src="https://logos-world.net/wp-content/uploads/2020/04/YouTube-Logo.png"
+          ></img>
+        </Link>
       </div>
-
       <div className="col-span-10 ml-36 px-10">
-        <div>
+        <form
+          className=" max-w-fit "
+          ref={formElement}
+          onSubmit={(e) => handleSearchClick(e, searchTerm)}
+        >
           <input
             placeholder="Search"
-            className="w-1/2 border border-gray-400 rounded-l-full pl-3"
+            className="border border-gray-400 w-96 rounded-l-full pl-3 focus:outline-none"
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
-            onBlur={() => setShowSuggestions(false)}
           />
           <button className="px-4 border border-gray-400 bg-gray-200 rounded-r-full">
             Search
@@ -73,9 +137,15 @@ const Head = () => {
                 {suggestions.map((s) => (
                   <li
                     key={s}
-                    onClick={() => setSearchTerm(s)}
+                    onClick={(e) => {
+                      setSearchTerm(s);
+                      setShowSuggestions(false);
+
+                      handleSearchClick(e, searchTerm);
+                    }}
                     className="flex shadow-sm hover:bg-gray-100"
                   >
+                    {" "}
                     <HiMagnifyingGlass className="mt-1 mr-1" />
                     {s}
                   </li>
@@ -83,11 +153,34 @@ const Head = () => {
               </ul>
             </div>
           )}
-        </div>
+        </form>
       </div>
-
-      <div className="flex col-span-1 justify-end">
-        <FaUserAlt className="h-8 mr-2" />
+      <div className="w-40">
+        {!profile ? (
+          <button
+            className="py-2 flex leading-none px-2 border border-red-600 hover:border-transparent hover:scale-125 hover:text-red-600 hover:bg-white"
+            onClick={login}
+          >
+            <img
+              className="rounded-full w-9"
+              src={googleIcon}
+              alt="googleIcon"
+            />
+            <span className="m-2">Sign In</span>
+          </button>
+        ) : (
+          <button
+            className="py-2 flex leading-none px-2 border border-red-600 hover:border-transparent hover:scale-125 hover:text-red-600 hover:bg-white"
+            onClick={logOut}
+          >
+            <img
+              className="rounded-full bg-white p-1 w-9"
+              src={profile.picture}
+              alt="userProfile"
+            />
+            <span className="m-2 ">Sign out</span>
+          </button>
+        )}
       </div>
     </div>
   );
