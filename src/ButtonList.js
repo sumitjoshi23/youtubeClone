@@ -6,12 +6,15 @@ const ButtonList = () => {
     "Lectures",
     "Stocks",
     "Music",
+    "Poetry",
     "Mixes",
+    "Gaming",
+    "News",
+    "Stocks",
     "T-Series",
     "Bollywood Music",
     "Dramedy",
     "JavaScript",
-    "Poetry",
     "Cricket",
   ];
   let renderedButtons = allButtons.map((button) => (
@@ -19,7 +22,7 @@ const ButtonList = () => {
       {button}
     </Button>
   ));
-  return <div>{renderedButtons}</div>;
+  return <div className="flex">{renderedButtons}</div>;
 };
 
 export default ButtonList;

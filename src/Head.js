@@ -100,21 +100,21 @@ const Head = () => {
     dispatch(toggleMenu());
   }
   return (
-    <div className="sticky top-0 bg-white grid items-center grid-flow-col py-3 mt-0 mb-2 mx-2 shadow-lg">
+    <div className="sticky top-0 bg-white grid items-center grid-flow-col py-3 mb-6 mx-2 shadow-lg">
       <div className="flex col-span-1">
         <GiHamburgerMenu
           onClick={() => handleToggleMenu()}
-          className="h-8 w-8 px-2"
+          className="h-11 mx-2 mr-4 cursor-pointer"
         />
         <Link to="/">
           <img
-            className="h-8 mx-2"
+            className="h-11"
             alt="youTubeLogo"
             src="https://logos-world.net/wp-content/uploads/2020/04/YouTube-Logo.png"
           ></img>
         </Link>
       </div>
-      <div className="col-span-10 ml-36 px-10">
+      <div className="col-span-10 m-auto">
         <form
           className=" max-w-fit "
           ref={formElement}
@@ -122,13 +122,13 @@ const Head = () => {
         >
           <input
             placeholder="Search"
-            className="border border-gray-400 w-96 rounded-l-full pl-3 focus:outline-none"
+            className="border h-11 border-gray-400 w-96 rounded-l-full pl-3 focus:outline-none"
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setShowSuggestions(true)}
           />
-          <button className="px-4 border border-gray-400 bg-gray-200 rounded-r-full">
+          <button className="px-4 h-11 border border-gray-400 bg-gray-200 rounded-r-full">
             Search
           </button>
           {showSuggestions && (
@@ -158,7 +158,7 @@ const Head = () => {
       <div className="w-40">
         {!profile ? (
           <button
-            className="py-2 flex leading-none px-2 border border-red-600 hover:border-transparent hover:scale-125 hover:text-red-600 hover:bg-white"
+            className="float-right flex items-center leading-none px-2 py-1 rounded border border-gray-400 hover:border-transparent hover:scale-125  "
             onClick={login}
           >
             <img
@@ -170,7 +170,7 @@ const Head = () => {
           </button>
         ) : (
           <button
-            className="py-2 flex leading-none px-2 border border-red-600 hover:border-transparent hover:scale-125 hover:text-red-600 hover:bg-white"
+            className="float-right flex items-center leading-none px-2 py-1 rounded border border-gray-400 hover:border-transparent hover:scale-125 "
             onClick={logOut}
           >
             <img
