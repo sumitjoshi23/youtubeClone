@@ -1,29 +1,30 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { GiHamburgerMenu } from "react-icons/gi";
-import googleIcon from "./utils/images/googleIcon.png";
+import googleIcon from "../utils/images/googleIcon.png";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleMenu } from "./store/slices/appSlice";
+import { toggleMenu } from "../store/slices/appSlice";
 import {
   YOUTUBE_AUTO_SUGGESTIONS_API_LINK,
   YOUTUBE_SEARCHBYKEYWORD_API_LINK,
-} from "./utils/constants";
-import youTubeLogo from "./utils/images/youTubeLogo.png";
-import { cacheResults } from "./store/slices/searchSlice";
+} from "../utils/constants";
+import youTubeLogo from "../utils/images/youTubeLogo.png";
+import { cacheResults } from "../store/slices/searchSlice";
 import { Link } from "react-router-dom";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import {
   setSignedInUser,
   setSignedInUserProfile,
-} from "./store/slices/signedInUserSlice";
-import { setVideos } from "./store/slices/videoSlice";
+} from "../store/slices/signedInUserSlice";
+import { setVideos } from "../store/slices/videoSlice";
 
 const Head = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchCache = useSelector((store) => store.search);
+  const formElement = useRef();
 
   const { user, profile } = useSelector((store) => store.signedInUser);
   const dispatch = useDispatch();
@@ -61,7 +62,6 @@ const Head = () => {
     let data = await fetch(YOUTUBE_AUTO_SUGGESTIONS_API_LINK + searchTerm);
     let json = await data.json();
     dispatch(cacheResults({ [searchTerm]: json[1] }));
-
     setSuggestions(json[1]);
   }, [searchTerm, dispatch]);
 
@@ -76,7 +76,6 @@ const Head = () => {
       clearTimeout(timer);
     };
   }, [searchCache, searchTerm, getAutoSuggestions]);
-  const formElement = useRef();
 
   useEffect(() => {
     const handler = (e) => {
@@ -88,7 +87,7 @@ const Head = () => {
     };
   }, []);
 
-  async function handleSearchClick(e, s) {
+  async function handleSearchForm(e, s) {
     e.preventDefault();
     const data = await fetch(YOUTUBE_SEARCHBYKEYWORD_API_LINK(s));
     const json = await data.json();
@@ -115,7 +114,7 @@ const Head = () => {
         <form
           className="max-w-fit "
           ref={formElement}
-          onSubmit={(e) => handleSearchClick(e, searchTerm)}
+          onSubmit={(e) => handleSearchForm(e, searchTerm)}
         >
           <input
             placeholder="Search"
@@ -138,11 +137,10 @@ const Head = () => {
                       setSearchTerm(s);
                       setShowSuggestions(false);
 
-                      handleSearchClick(e, searchTerm);
+                      handleSearchForm(e, searchTerm);
                     }}
                     className="flex shadow-sm hover:bg-gray-200"
                   >
-                    {" "}
                     <HiMagnifyingGlass className="mt-1 mr-1" />
                     {s}
                   </li>

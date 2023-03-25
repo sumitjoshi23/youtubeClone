@@ -3,8 +3,8 @@ import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Shimmer from "./Shimmer";
-import { setVideos } from "./store/slices/videoSlice";
-import { YOUTUBE_API_LINK } from "./utils/constants";
+import { setVideos } from "../store/slices/videoSlice";
+import { YOUTUBE_API_LINK } from "../utils/constants";
 import VideoCard from "./VideoCard";
 
 const VideoContainer = () => {
@@ -20,7 +20,13 @@ const VideoContainer = () => {
   }, [getVideos]);
 
   let renderedVideos = videos?.map((video) => (
-    <Link key={video.id} to={"/watch?v=" + video.id}>
+    <Link
+      key={typeof video.id === "string" ? video.id : video.etag}
+      to={
+        "/watch?v=" +
+        (typeof video.id === "string" ? video.id : video.id.videoId)
+      }
+    >
       <VideoCard video={video}></VideoCard>
     </Link>
   ));

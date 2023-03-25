@@ -1,8 +1,8 @@
-import Head from "./Head";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { Outlet } from "react-router-dom";
-import ScrollToTop from "./ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop";
+import Head from "./components/Head";
 function App() {
   return (
     <Provider store={store}>

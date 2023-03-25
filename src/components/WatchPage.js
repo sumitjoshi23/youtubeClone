@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import CommentsContainer from "./CommentsContainer";
 import LiveChat from "./LiveChat";
-import { closeMenu } from "./store/slices/appSlice";
+import { closeMenu } from "../store/slices/appSlice";
 const WatchPage = () => {
   let [params] = useSearchParams();
   let dispatch = useDispatch();

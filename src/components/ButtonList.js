@@ -10,7 +10,6 @@ const ButtonList = () => {
     "Mixes",
     "Gaming",
     "News",
-    "Stocks",
     "T-Series",
     "Bollywood Music",
     "Dramedy",

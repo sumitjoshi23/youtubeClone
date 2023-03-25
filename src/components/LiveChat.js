@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChatMessage from "./ChatMessage";
-import { addMessage } from "./store/slices/chatSlice";
-import { generateRandomName, generateRandomMessage } from "./utils/helper";
+import { addMessage } from "../store/slices/chatSlice";
+import { generateRandomName, generateRandomMessage } from "../utils/helper";
 
 const LiveChat = () => {
   let dispatch = useDispatch();
   const [message, setMessage] = useState("");
 
   let chatMessages = useSelector((store) => store.chat.messages);
+  let { profile } = useSelector((store) => store.signedInUser);
   useEffect(() => {
     const i = setInterval(() => {
       dispatch(
@@ -28,7 +29,7 @@ const LiveChat = () => {
 
     dispatch(
       addMessage({
-        name: "Sumit Joshi",
+        name: !profile ? "Anonymous user" : profile.name,
         message,
       })
     );
@@ -38,18 +39,17 @@ const LiveChat = () => {
 
   return (
     <>
-      <div className="flex flex-col-reverse overflow-y-scroll mt-4 p-2 border border-black w-full h-[585px] bg-slate-100 rounded-lg">
-        <form
-          className=" p-2 border border-black w-full flex"
-          onSubmit={handleSubmit}
-        >
+      <div className="flex flex-col-reverse overflow-y-scroll mt-4 p-2 border border-gray-500 w-full h-[585px] bg-slate-100 rounded-lg">
+        <form className="w-full flex" onSubmit={handleSubmit}>
           <input
-            className=" border border-black w-full"
+            className="border rounded-lg border-gray-500 w-full"
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <button className="bg-green-500 px-2 m-2">Send</button>
+          <button className="rounded text-white bg-red-700 px-2 m-2">
+            Send
+          </button>
         </form>
         {chatMessages.map((chatMessage, index) => (
           <ChatMessage

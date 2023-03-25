@@ -1,6 +1,6 @@
 import React from "react";
 import { FaUserAlt } from "react-icons/fa";
-import { commentsData } from "./utils/constants";
+import { commentsData } from "../utils/constants";
 
 const Comment = ({ data }) => {
   return (
